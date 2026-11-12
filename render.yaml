@@ -1,0 +1,52 @@
+# =============================================
+# Render Blueprint: product-service (Docker)
+# Render > New > Blueprint > seleccionar este repositorio
+# =============================================
+services:
+  - type: web
+    name: product-service
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # Backblaze B2 (Guía 9). Render pide los valores `sync: false` al crear el Blueprint.
+      - key: STORAGE_PROVIDER
+        value: b2
+      - key: B2_ENDPOINT
+        sync: false
+      - key: B2_BUCKET
+        sync: false
+      - key: B2_KEY_ID
+        sync: false
+      - key: B2_APPLICATION_KEY
+        sync: false
+
+      # Valkey en Aiven (Guía 10).
+      - key: CACHE_PROVIDER
+        value: valkey
+      - key: VALKEY_URL
+        sync: false
+      - key: CACHE_TTL_SECONDS
+        value: "300"
+
+      # Kafka (Aiven).
+      - key: KAFKA_ENABLED
+        value: "true"
+      - key: KAFKA_BROKERS
+        sync: false
+      - key: KAFKA_TOPIC_PRODUCT_EVENTS
+        value: product-events
+      - key: KAFKA_SSL
+        value: "true"
+      - key: KAFKA_SSL_CA
+        sync: false
+      - key: KAFKA_SSL_CERT
+        sync: false
+      - key: KAFKA_SSL_KEY
+        sync: false
+      # Si en Aiven usas SASL en lugar de certificado de cliente, agrega en el
+      # panel de Render: KAFKA_SASL_MECHANISM, KAFKA_USERNAME y KAFKA_PASSWORD.
